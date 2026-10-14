@@ -3,23 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MovieResource;
 use App\Services\MovieDbService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MovieController extends Controller
 {
-    public function popular(MovieDbService $movieDb)
+    public function popular(MovieDbService $movieDb): AnonymousResourceCollection
     {
-        return response()->json($movieDb->popular());
+        return MovieResource::collection($movieDb->popular());
     }
 
-    public function search(Request $request, MovieDbService $movieDb)
+    public function search(Request $request, MovieDbService $movieDb): AnonymousResourceCollection
     {
-        return response()->json($movieDb->search($request->input('q', '')));
+        return MovieResource::collection($movieDb->search($request->input('q', '')));
     }
 
-    public function show($id, MovieDbService $movieDb)
+    public function show($id, MovieDbService $movieDb): MovieResource
     {
-        return response()->json($movieDb->find($id));
+        return MovieResource::make($movieDb->find($id));
     }
 }

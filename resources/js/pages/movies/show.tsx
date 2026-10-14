@@ -7,7 +7,7 @@ export default function Show({ id }) {
     useEffect(() => {
         fetch('/api/movies/' + id)
             .then(res => res.json())
-            .then(data => setMovie(data));
+            .then(data => setMovie(data.data));
     }, [id]);
 
     return (
@@ -22,8 +22,8 @@ export default function Show({ id }) {
 
                     {movie && (
                         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 bg-gray-800 rounded overflow-hidden">
-                            {movie.poster_path ? (
-                                <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} className="w-full sm:w-72 aspect-[2/3] object-cover" />
+                            {movie.poster_url ? (
+                                <img src={movie.poster_url} alt={movie.title} className="w-full sm:w-72 aspect-[2/3] object-cover" />
                             ) : (
                                 <div className="w-full sm:w-72 aspect-[2/3] flex items-center justify-center bg-gray-700 text-gray-400 text-sm">Geen poster</div>
                             )}

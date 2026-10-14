@@ -1,8 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { useDebounce } from '@/hooks/use-debounce';
 
 export default function Welcome() {
     const [search, setSearch] = useState('');
+    const debouncedSearch = useDebounce(search);
     const [movies, setMovies] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [showFavorites, setShowFavorites] = useState(false);
@@ -19,16 +21,12 @@ export default function Welcome() {
             return;
         }
 
-        const timer = setTimeout(() => {
-            const url = search ? '/api/movies/search?q=' + encodeURIComponent(search) : '/api/movies/popular';
+        const url = debouncedSearch ? '/api/movies/search?q=' + encodeURIComponent(debouncedSearch) : '/api/movies/popular';
 
-            fetch(url)
-                .then(res => res.json())
-                .then(data => setMovies(data.data));
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [search, showFavorites]);
+        fetch(url)
+            .then(res => res.json())
+            .then(data => setMovies(data.data));
+    }, [debouncedSearch, showFavorites]);
 
     function toggleFavorite(id) {
         const newFavorites = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];

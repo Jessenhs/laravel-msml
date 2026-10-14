@@ -2,23 +2,30 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 
 class MovieDbService
 {
+    private PendingRequest $http;
+
+    public function __construct()
+    {
+        $this->http = Http::baseUrl(config('services.tmdb.endpoint'))
+            ->withQueryParameters(['api_key' => config('services.tmdb.key')])
+            ->acceptJson();
+    }
+
     public function popular()
     {
-        $response = Http::get(config('services.tmdb.endpoint').'/movie/popular', [
-            'api_key' => config('services.tmdb.key'),
-        ])->json();
+        $response = $this->http->get('/movie/popular')->json();
 
         return $response['results'] ?? [];
     }
 
     public function search($query)
     {
-        $response = Http::get(config('services.tmdb.endpoint').'/search/movie', [
-            'api_key' => config('services.tmdb.key'),
+        $response = $this->http->get('/search/movie', [
             'query' => $query,
         ])->json();
 
@@ -27,8 +34,6 @@ class MovieDbService
 
     public function find($id)
     {
-        return Http::get(config('services.tmdb.endpoint').'/movie/'.$id, [
-            'api_key' => config('services.tmdb.key'),
-        ])->json();
+        return $this->http->get('/movie/'.$id)->json();
     }
 }

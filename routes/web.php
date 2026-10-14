@@ -1,26 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WebController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    $response = Http::get('https://api.themoviedb.org/3/movie/popular?api_key=' . env('TMDB_API_KEY'))->json();
-
-    $movies = $response['results'] ?? [];
-
-    return Inertia::render('welcome', ['movies' => $movies]);
-})->name('home');
-
-Route::get('/search', function () {
-    $query = request()->input('q', '');
-    $response = Http::get('https://api.themoviedb.org/3/search/movie?api_key=' . env('TMDB_API_KEY') . '&query=' . urlencode($query))->json();
-
-    return Inertia::render('welcome', ['movies' => $response['results'] ?? [], 'query' => $query]);
-})->name('search');
+Route::get('/', [WebController::class, 'index'])->name('home');
+Route::get('/movies/{id}', [WebController::class, 'show'])->name('movies.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__.'/settings.php';

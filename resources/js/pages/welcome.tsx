@@ -13,7 +13,7 @@ export default function Welcome() {
 
     useEffect(() => {
         if (showFavorites) {
-            Promise.all(favorites.map(id => fetch('/api/movies/' + id).then(res => res.json())))
+            Promise.all(favorites.map(id => fetch('/api/movies/' + id).then(res => res.json()).then(data => data.data)))
                 .then(data => setMovies(data));
 
             return;
@@ -24,7 +24,7 @@ export default function Welcome() {
 
             fetch(url)
                 .then(res => res.json())
-                .then(data => setMovies(data));
+                .then(data => setMovies(data.data));
         }, 300);
 
         return () => clearTimeout(timer);
@@ -74,8 +74,8 @@ export default function Welcome() {
                                 >
                                     {favorites.includes(m.id) ? '❤️' : '🤍'}
                                 </button>
-                                {m.poster_path ? (
-                                    <img src={`https://image.tmdb.org/t/p/w500${m.poster_path}`} alt={m.title} loading="lazy" className="w-full aspect-[2/3] object-cover" />
+                                {m.poster_url ? (
+                                    <img src={m.poster_url} alt={m.title} loading="lazy" className="w-full aspect-[2/3] object-cover" />
                                 ) : (
                                     <div className="w-full aspect-[2/3] flex items-center justify-center bg-gray-700 text-gray-400 text-sm">Geen poster</div>
                                 )}

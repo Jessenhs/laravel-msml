@@ -16,14 +16,14 @@ class MovieDbService
             ->acceptJson();
     }
 
-    public function popular()
+    public function popular(): array
     {
         $response = $this->http->get('/movie/popular')->json();
 
         return $response['results'] ?? [];
     }
 
-    public function search($query)
+    public function search($query): array
     {
         $response = $this->http->get('/search/movie', [
             'query' => $query,
@@ -32,7 +32,7 @@ class MovieDbService
         return $response['results'] ?? [];
     }
 
-    public function find($id)
+    public function find($id): array
     {
         return $this->http->get('/movie/'.$id)->json();
     }

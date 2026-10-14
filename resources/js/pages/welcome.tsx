@@ -1,27 +1,28 @@
 import { Head } from '@inertiajs/react';
+import { useState } from 'react';
+import { router } from '@inertiajs/react';
 
-type Movie = {
-    id: number;
-    title: string;
-    overview: string;
-    poster_path: string;
-    release_date: string;
-};
+export default function Welcome({ movies, query }) {
+    const [search, setSearch] = useState(query || '');
 
-export default function Welcome({ movies }: { movies: Movie[] }) {
     return (
         <>
-            <Head title="Welcome" />
-            <ul>
-                {movies.map(m => (
-                    <li key={m.id}>
-                        <img src={`https://image.tmdb.org/t/p/w200${m.poster_path}`} alt={m.title} />
-                        <h2>{m.title}</h2>
-                        <p>{m.release_date}</p>
-                        <p>{m.overview}</p>
-                    </li>
-                ))}
-            </ul>
+            <Head title="Movies" />
+
+            <form onSubmit={e => { e.preventDefault(); router.get('/search', { q: search }); }}>
+                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Zoek een film..." />
+                <button>Zoeken</button>
+            </form>
+
+            {movies.length === 0 && <p>Geen films gevonden.</p>}
+
+            {movies.map(m => (
+                <div key={m.id}>
+                    <h2>{m.title}</h2>
+                    <p>{m.overview}</p>
+                    <img src={`https://image.tmdb.org/t/p/w200${m.poster_path}`} />
+                </div>
+            ))}
         </>
     );
 }
